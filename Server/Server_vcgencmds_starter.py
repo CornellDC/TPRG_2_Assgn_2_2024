@@ -14,21 +14,30 @@ port = 5000
 s.bind((host, port))
 s.listen(5)
 
-
 def get_temp():
   """gets from the os, using vcgencmd - the core-temperature."""
   t = os.popen('/usr/bin/vcgencmd measure_temp').readline()
   formatted_temp = t.split('=')[1]
   return formatted_temp
 
+def get_arm_clock():
+  """gets from the os, using vcgencmd - the cpu clock speed."""
+  clock_speed = os.popen('/usr/bin/vcgencmd measure_clock arm').readline()
+  formatted_clock_speed = clock_speed.split('=')[1]
+  return formatted_clock_speed
+
 while True:
   temp = get_temp()
+  clock_speed = get_arm_clock()
 
-  ini_string = """{"Temperature": t}"""
+  # initialising json object string
+  ini_string = """{"Temperature": temp,
+                   "arm_clock_speed": clock_speed}"""
 
   # converting string to json
   f_dict = eval(
     ini_string)  # The eval() function evaluates JavaScript code represented as a string and returns its completion value.
+  print(f_dict)
 
   c, addr = s.accept()
   print ('Got connection from',addr)
