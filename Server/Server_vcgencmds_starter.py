@@ -15,16 +15,21 @@ s.bind((host, port))
 s.listen(5)
 
 
-#gets the Core Temperature from Pi, ref https://github.com/nicmcd/vcgencmd/blob/master/README.md
-t = os.popen('vcgencmd measure_volts ain1').readline() #gets from the os, using vcgencmd - the core-temperature
-# initialising json object string
-ini_string = """{"Temperature": t}"""
-# converting string to json
-f_dict = eval(ini_string) # The eval() function evaluates JavaScript code represented as a string and returns its completion value.
-
-
+def get_temp():
+  """gets from the os, using vcgencmd - the core-temperature."""
+  t = os.popen('/usr/bin/vcgencmd measure_temp').readline()
+  formatted_temp = t.split('=')[1]
+  return formatted_temp
 
 while True:
+  temp = get_temp()
+
+  ini_string = """{"Temperature": t}"""
+
+  # converting string to json
+  f_dict = eval(
+    ini_string)  # The eval() function evaluates JavaScript code represented as a string and returns its completion value.
+
   c, addr = s.accept()
   print ('Got connection from',addr)
   res = bytes(str(f_dict), 'utf-8') # needs to be a byte
