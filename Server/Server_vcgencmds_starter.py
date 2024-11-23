@@ -26,13 +26,23 @@ def get_arm_clock():
   formatted_clock_speed = clock_speed.split('=')[1]
   return formatted_clock_speed
 
+def get_voltage():
+  """gets from the os, using vcgencmd - the cpu voltage."""
+  v = os.popen('/usr/bin/vcgencmd measure_volts').readline()
+  formatted_clock_speed = clock_speed.split('=')[1]
+  return formatted_clock_speed
+
+
 while True:
   temp = get_temp()
   clock_speed = get_arm_clock()
+  voltage = get_voltage()
 
   # initialising json object string
-  ini_string = """{"Temperature": temp,
-                   "arm_clock_speed": clock_speed}"""
+  ini_string = """{"temperature": temp,
+                   "arm_clock_speed": clock_speed,
+                   "cpu_voltage" : voltage}
+                   """
 
   # converting string to json
   f_dict = eval(
