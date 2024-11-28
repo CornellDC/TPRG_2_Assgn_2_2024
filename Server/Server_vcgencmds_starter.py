@@ -1,4 +1,15 @@
-# This server runs on Pi, sends Pi's your 4 arguments from the vcgencmds, sent as Json object.
+'''
+TPRG 2131 Fall 2024 Assignment 2 - Server
+November 28th, 2024
+Cornell Falconer-Lawson <Cornell.FalconerLawson@dcmail.ca>
+
+This program is strictly my own work. Any material
+beyond course learning materials that is taken from
+the Web or other sources is properly cited, giving
+credit to the original author(s).
+
+This server runs on Pi, sends Pi's your 4 arguments from the vcgencmds, sent as Json object.
+'''
 
 # details of the Pi's vcgencmds - https://www.tomshardware.com/how-to/raspberry-pi-benchmark-vcgencmd
 # more vcgens on Pi 4, https://forums.raspberrypi.com/viewtopic.php?t=245733
