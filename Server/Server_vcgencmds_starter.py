@@ -33,6 +33,7 @@ def get_temp():
   """
     t = os.popen('/usr/bin/vcgencmd measure_temp').readline()
     formatted_temp = t.split('=')[1]
+    formatted_temp = formatted_temp.strip('\n') # remove new line.
     return formatted_temp
 
 
@@ -44,6 +45,7 @@ def get_clock(name):
   """
     clock_speed = os.popen(f'/usr/bin/vcgencmd measure_clock {name}').readline()
     formatted_clock_speed = clock_speed.split('=')[1]
+    formatted_clock_speed = f"{formatted_clock_speed.split('\n')[0]}Hz" # remove new line.
     return formatted_clock_speed
 
 
@@ -54,6 +56,7 @@ def get_voltage():
   """
     v = os.popen('/usr/bin/vcgencmd measure_volts').readline()
     formatted_voltage = v.split('=')[1]
+    formatted_voltage = formatted_voltage.strip('\n') # remove new line.
     return formatted_voltage
 
 
@@ -64,16 +67,14 @@ while True:
     core_clock_speed = get_clock('core')
     voltage = get_voltage()
 
-    # initialising json object string
-    ini_string = """{"temperature": temp, "arm_clock_speed": arm_clock_speed, "core_clock_speed" : core_clock_speed, "cpu_voltage" : voltage}"""
+    # initialising dict.
+    ini_dict = {"temperature": temp, "arm_clock_speed": arm_clock_speed, "core_clock_speed": core_clock_speed,
+                  "cpu_voltage": voltage}
 
-    print(ini_string)
+    #print(ini_string)
 
-    # converting string to json
-    f_dict = eval(
-        ini_string)  # The eval() function evaluates JavaScript code represented as a string and returns its completion value.
-    print(f_dict)
-    print(f_dict["temperature"])
+    # converting dict to json
+    f_dict = json.dumps(ini_dict)  #
 
     c, addr = s.accept()
     print('Got connection from', addr)
