@@ -68,7 +68,10 @@ def get_voltage():
   """
     v = os.popen('/usr/bin/vcgencmd measure_volts').readline() #vcgencmd commands
     formatted_voltage = v.split('=')[1]
-    formatted_voltage = formatted_voltage.strip('\n') # remove new line.
+    formatted_voltage = formatted_voltage.strip('\n')    # remove new line.
+    formatted_voltage = formatted_voltage.split('V')[0] # remove 'V' so that it can be rounded.
+    formatted_voltage = round(float(formatted_voltage), 1) # convert to float and round to 1 decimal.
+    formatted_voltage = str(formatted_voltage) + 'V' # Convert back to string and add the 'V'.
     return formatted_voltage
 
 try:
