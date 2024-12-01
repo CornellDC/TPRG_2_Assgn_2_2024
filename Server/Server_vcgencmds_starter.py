@@ -31,7 +31,7 @@ def get_temp():
   Gets from the os, using vcgencmd - the core-temperature.
   :return: Temperature in Celsius.
   """
-    t = os.popen('/usr/bin/vcgencmd measure_temp').readline()
+    t = os.popen('/usr/bin/vcgencmd measure_temp').readline() #vcgencmd commands
     formatted_temp = t.split('=')[1]
     formatted_temp = formatted_temp.strip('\n') # remove new line.
     return formatted_temp
@@ -41,6 +41,7 @@ def get_mem():
   Gets from the os, using vcgencmd - the installed memory on the RPi.
   :return: Total arm memory in MB.
   """
+    # https://raspberrypi.stackexchange.com/questions/108993/what-exactly-does-vcgencmd-get-mem-arm-display
     mem = os.popen('/usr/bin/vcgencmd get_config total_mem').readline()
     formatted_mem = mem.split('=')[1]
     formatted_mem = formatted_mem.strip('\n') + 'MB' # remove new line.
@@ -65,31 +66,36 @@ def get_voltage():
   Gets from the os, using vcgencmd - the cpu voltage.
   :return: CPU voltage in Volts.
   """
-    v = os.popen('/usr/bin/vcgencmd measure_volts').readline()
+    v = os.popen('/usr/bin/vcgencmd measure_volts').readline() #vcgencmd commands
     formatted_voltage = v.split('=')[1]
     formatted_voltage = formatted_voltage.strip('\n') # remove new line.
     return formatted_voltage
 
+try:
+    while True:
+        # Retrieve sensor values
+        temp = get_temp()
+        arm_clock_speed = get_clock('arm')
+        core_clock_speed = get_clock('core')
+        voltage = get_voltage()
+        total_mem = get_mem()
 
-while True:
-    # Retrieve sensor values
-    temp = get_temp()
-    arm_clock_speed = get_clock('arm')
-    core_clock_speed = get_clock('core')
-    voltage = get_voltage()
-    total_mem = get_mem()
+        # initialising dict.
+        ini_dict = {"temperature": temp, "arm_clock_speed": arm_clock_speed, "core_clock_speed": core_clock_speed,
+                      "cpu_voltage": voltage, "total_memory" : total_mem}
 
-    # initialising dict.
-    ini_dict = {"temperature": temp, "arm_clock_speed": arm_clock_speed, "core_clock_speed": core_clock_speed,
-                  "cpu_voltage": voltage, "total_memory" : total_mem}
 
-    #print(ini_string)
 
-    # converting dict to json
-    f_dict = json.dumps(ini_dict)  #
+        # converting dict to json
+        f_dict = json.dumps(ini_dict)
 
-    c, addr = s.accept()
-    print('Got connection from', addr)
-    res = bytes(str(f_dict), 'utf-8')  # needs to be a byte
-    c.send(res)  # sends data as a byte type
+        c, addr = s.accept()
+        print('Got connection from', addr)
+        res = bytes(str(f_dict), 'utf-8')  # needs to be a byte
+        c.send(res)  # sends data as a byte type
+        print(ini_dict)
+        c.close()
+
+except KeyboardInterrupt:
     c.close()
+    print("Thank you for using my program.")
