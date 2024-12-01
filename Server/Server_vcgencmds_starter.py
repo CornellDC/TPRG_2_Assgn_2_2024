@@ -28,7 +28,7 @@ s.listen(5)
 
 def get_temp():
     """
-  gets from the os, using vcgencmd - the core-temperature.
+  Gets from the os, using vcgencmd - the core-temperature.
   :return: Temperature in Celsius.
   """
     t = os.popen('/usr/bin/vcgencmd measure_temp').readline()
@@ -36,22 +36,33 @@ def get_temp():
     formatted_temp = formatted_temp.strip('\n') # remove new line.
     return formatted_temp
 
+def get_mem():
+    """
+  Gets from the os, using vcgencmd - the installed memory on the RPi.
+  :return: Total arm memory in MB.
+  """
+    mem = os.popen('/usr/bin/vcgencmd get_config total_mem').readline()
+    formatted_mem = mem.split('=')[1]
+    formatted_mem = formatted_mem.strip('\n') + 'MB' # remove new line.
+    return formatted_mem
+
+
 
 def get_clock(name):
     """
-  gets from the os, using vcgencmd - the specified clock speed.
+  Gets from the os, using vcgencmd - the specified clock speed.
   :param name: Name of the clock you want to retrieve, https://www.elinux.org/RPI_vcgencmd_usage
   :return: clock speed in Hz
   """
     clock_speed = os.popen(f'/usr/bin/vcgencmd measure_clock {name}').readline()
     formatted_clock_speed = clock_speed.split('=')[1]
-    formatted_clock_speed = f"{formatted_clock_speed.split('\n')[0]}Hz" # remove new line.
+    formatted_clock_speed = formatted_clock_speed.split('\n')[0] + "Hz" # remove new line.
     return formatted_clock_speed
 
 
 def get_voltage():
     """
-  gets from the os, using vcgencmd - the cpu voltage.
+  Gets from the os, using vcgencmd - the cpu voltage.
   :return: CPU voltage in Volts.
   """
     v = os.popen('/usr/bin/vcgencmd measure_volts').readline()
@@ -66,10 +77,11 @@ while True:
     arm_clock_speed = get_clock('arm')
     core_clock_speed = get_clock('core')
     voltage = get_voltage()
+    total_mem = get_mem()
 
     # initialising dict.
     ini_dict = {"temperature": temp, "arm_clock_speed": arm_clock_speed, "core_clock_speed": core_clock_speed,
-                  "cpu_voltage": voltage}
+                  "cpu_voltage": voltage, "total_memory" : total_mem}
 
     #print(ini_string)
 
